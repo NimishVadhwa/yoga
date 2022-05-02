@@ -1,12 +1,14 @@
 const express = require('express');
 const app = express();
 const db = require('./src/database');
-let port = process.env.PORT || 7000;
-var cors = require('cors');
+const port = process.env.PORT || 7000;
+const cors = require('cors');
+const route = require('./src/routes'); 
 
 app.use(express.json());
 app.use(cors());
 
+app.use('/api',route);
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,7 +26,7 @@ db
     .sync()
     .then((result) => {
         app.listen(port);
-        console.log('Db connected===', port);
+        console.log('Db connected===',port);
     }).catch((err) => {
         console.log('db not connected');
         console.log(err);

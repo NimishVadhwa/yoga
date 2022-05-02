@@ -1,0 +1,69 @@
+const { Model, DataTypes } = require('sequelize');
+const database = require('../database');
+
+class User extends Model { }
+
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true
+        },
+        first_name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        last_name: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: true
+        },
+        password: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        phone: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        image: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        token: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            comment: "this is the token which is generated while login"
+        },
+        fcm_token: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+            comment: "This is the fire base token"
+        },
+        is_activated: {
+            type: DataTypes.ENUM('0', '1'),
+            allowNull: false,
+            defaultValue: '0',
+            comment: "0 is for not activated and 1 is for activated"
+        },
+        type: {
+            type: DataTypes.ENUM('user', 'team', 'admin'),
+            allowNull: false,
+            defaultValue: 'user'
+        }
+    },
+    {
+        sequelize: database,
+        modelName: "User"
+    }
+
+);
+
+
+module.exports = User;
