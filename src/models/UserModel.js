@@ -46,11 +46,21 @@ User.init(
             allowNull: true,
             comment: "This is the fire base token"
         },
+        otp: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        is_influence: {
+            type: DataTypes.ENUM('0', '1'),
+            allowNull: false,
+            defaultValue: '0',
+            comment: "0 is for not influence and 1 is for influence"
+        },
         is_activated: {
             type: DataTypes.ENUM('0', '1'),
             allowNull: false,
             defaultValue: '0',
-            comment: "0 is for not activated and 1 is for activated"
+            comment: "0 is for not activate and 1 is for activate"
         },
         type: {
             type: DataTypes.ENUM('user', 'team', 'admin'),
@@ -61,6 +71,7 @@ User.init(
     {
         sequelize: database,
         modelName: "User"
+        
     }
 
 );
