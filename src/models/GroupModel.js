@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 
-class Category extends Model { }
+class Group extends Model { }
 
-Category.init(
+Group.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -15,23 +15,21 @@ Category.init(
             type: DataTypes.TEXT,
             allowNull: false
         },
-        is_block: {
-            type: DataTypes.ENUM('0', '1'),
+        image: {
+            type: DataTypes.TEXT,
             allowNull: false,
-            defaultValue: "0",
-            comment: "0 is for unblock and 1 is for block"
         },
-        type: {
-            type: DataTypes.ENUM('department','plan','form'),
-            allowNull: false
+        roomname: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
     },
     {
         sequelize: database,
-        modelName: "Category"
+        modelName: "Group"
     }
 
 );
 
 
-module.exports = Category;
+module.exports = Group;

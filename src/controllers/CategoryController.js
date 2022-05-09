@@ -3,6 +3,7 @@ const category = require('../models/CategoryModel');
 const team = require('../models/TeamModel')
 const plan = require('../models/PlanModel');
 
+
 exports.all_categories = async(req,res, next) => {
 
     const schema = joi.object({
@@ -70,7 +71,7 @@ exports.block_category = async (req, res, next) => {
 
     const schema = joi.object({
         block: joi.string().required().valid('0','1'),
-        cat_id: joi.string().required()
+        cat_id: joi.number().required()
     });
 
     try {
@@ -85,13 +86,13 @@ exports.block_category = async (req, res, next) => {
 
         if(check.type == 'department')
         {
-            let check_type = team.findOne({ where: { CategoryId : req.body.cat_id } })
+            let check_type = await  team.findOne({ where: { CategoryId : req.body.cat_id } })
 
-            if(check_type) throw new Error('Department is already in use');
+            if(check_type) throw new Error('Team category is already in use');
         }
-        else if(check_type == 'plan')
+        else if(check.type == 'plan')
         {
-            let check_type = plan.findOne({ where: { CategoryId: req.body.cat_id } })
+            let check_type = await plan.findOne({ where: { CategoryId: req.body.cat_id } })
 
             if (check_type) throw new Error('Plan is already in use');
         }
@@ -109,6 +110,63 @@ exports.block_category = async (req, res, next) => {
 
     } catch (err) {
         err.status = 400;
+        next(err);
+    }
+
+}
+
+exports.cat_plan = async(req, res, next)=>{
+
+    try {
+
+        const data = await category.findAll({
+            where: { type: 'plan' },
+            include: [
+                {
+                    model :plan,
+                    required: false,
+                    limit: 5   
+                }
+            ]
+        });
+
+        return res.status(200).json({
+            data: data,
+            status: true,
+            message: "All plans with plan category"
+        });
+
+    } catch (err) {
+        err.status = 404;
+        next(err);
+    }
+
+}
+
+exports.edit_category = async (req, res, next) => {
+
+    const schema = joi.object({
+        name: joi.string().required(),
+        cat_id: joi.number().required()
+    });
+
+    try {
+
+        await schema.validateAsync(req.body);
+
+        await category.update({ name: req.body.name }, {
+            where: { id: req.body.cat_id }
+        });
+
+        return res.status(200).json({
+            data: [],
+            status: true,
+            message: "updated successfully"
+        });
+
+
+    } catch (err) {
+        err.status = 409;
         next(err);
     }
 

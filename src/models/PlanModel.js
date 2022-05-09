@@ -16,6 +16,50 @@ Plan.init(
             type: DataTypes.TEXT,
             allowNull: false
         },
+        image:{
+            type:DataTypes.TEXT,
+            allowNull: false,
+        },
+        price:{
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        focus: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        duration: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        gender_allowed: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        mode: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        age_range: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        schedule: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        total_sessions: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        validity: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        description:{
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
         is_block: {
             type: DataTypes.ENUM('0', '1'),
             allowNull: false,
