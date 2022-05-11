@@ -26,7 +26,7 @@ exports.add_form_column = async(req, res, next)=>{
                 column_type:element.type,
                 min_value:element.min,
                 max_value: element.max,
-                CategoryId: req.body.cat_id
+                category_id: req.body.cat_id
             });
 
         });

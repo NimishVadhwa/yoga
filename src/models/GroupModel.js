@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 
-class Group extends Model { }
+class group extends Model { }
 
-Group.init(
+group.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -26,10 +26,11 @@ Group.init(
     },
     {
         sequelize: database,
-        modelName: "Group"
+        modelName: "group",
+        underscored: true
     }
 
 );
 
 
-module.exports = Group;
+module.exports = group;

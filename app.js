@@ -5,6 +5,7 @@ require('dotenv').config()
 const port = process.env.PORT || 7000;
 const cors = require('cors');
 const route = require('./src/routes'); 
+const { send_msg } = require('./src/helper');
 
 app.use(express.json());
 app.use(cors());
@@ -38,11 +39,18 @@ db
             // socket.broadcast.emit('connection1','asdf1');
 
 
-            socket.on('send-msg', data => {
-                console.log('send====', data);
-                socket.broadcast.emit('receive-msg', data);
+            socket.on('send-single-msg', (sender,receiver,msg,msg_type) => {
+                console.log('send====', sender, '====from', receiver,'====msg',msg);
+                send_msg(sender,receiver,msg,msg_type,'single');
             });
 
+            socket.on('send-group-msg', (sender,receiver, group, msg,msg_type) => {
+                console.log('send====', sender, '====from', group, '====msg', msg);
+                send_msg(sender, receiver, msg, msg_type, 'group');
+
+            });
+            
+            socket.broadcast.emit('receive-msg', data);
 
         });
 

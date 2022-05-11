@@ -10,7 +10,8 @@ const FormController = require('./controllers/FormController');
 const AdminController = require('./controllers/AdminController');
 const PlanController = require('./controllers/PlanController');
 const ChatController = require('./controllers/ChatController');
-
+const testimonialController = require('./controllers/TestimonialController');
+const ProductController = require('./controllers/ProductController');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -30,6 +31,23 @@ let storage_chat = multer.diskStorage({
     }
 });
 
+let storage_testimonial = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/images/testimonials');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Math.random() + file.originalname);
+    }
+});
+
+let storage_product = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/images/product');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Math.random() + file.originalname);
+    }
+});
 
 let imageFilter = function (req, file, cb) {
     if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
@@ -49,6 +67,19 @@ let upload_chat = multer({
     storage: storage_chat,
     limits: { fileSize: 10 * 1024 * 1024 } // 10 mb size
 });
+
+let upload_testimonal = multer({
+    storage: storage_testimonial,
+    fileFilter: imageFilter,
+    limits: { fileSize: 2 * 1024 * 1024 } // 2 mb size
+});
+
+let upload_product = multer({
+    fileFilter: imageFilter,
+    limits: { fileSize: 10 * 1024 * 1024, files: 10 }, // 10 mb size
+    storage: storage_product
+});
+
 
 //auth 
 route.post('/auth/login', AuthController.login);
@@ -82,14 +113,29 @@ route.get('/plan/plan-detail/:id', PlanController.plan_detail);
 route.get('/plan/all-plans', PlanController.all_plans);
 route.post('/plan/block-plans', PlanController.block_plan);
 
+//Testimonials
+route.get('/testimonial/all-list', testimonialController.all_list);
+route.post('/testimonial/add-testimonial', upload_testimonal.single('image'), testimonialController.add_testimonial);
+route.post('/testimonial/edit-testimonial', upload_testimonal.single('image'), testimonialController.edit_testimonial);
+route.post('/testimonial/block-testimonial', testimonialController.block_testimonial);
+
+
+//Products
+route.get('/product/all-products', ProductController.all_products);
+route.post('/product/add-product', upload_product.array('image',10), ProductController.add_product);
 
 
 //Form
 route.post('/form/add-form-field', auth, FormController.add_form_column);
 
 //Group 
-route.post('/group/create-group', upload_chat.single('image'), ChatController.create_group);
-route.post('/group/add-group-user', ChatController.add_group_user);
+route.post('/group/create-group',auth, upload_chat.single('image'), ChatController.create_group);
+route.post('/group/edit-group', auth, upload_chat.single('image'), ChatController.edit_group);
+route.post('/group/add-group-user',auth, ChatController.add_group_user);
+route.post('/group/edit-group-user', auth, ChatController.edit_group_user);
+route.post('/group/group-user-list', auth, ChatController.group_user_list);
+
+
 
 
 module.exports = route;

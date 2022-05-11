@@ -2,9 +2,9 @@ const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 const category = require('./CategoryModel');
 
-class Plan extends Model { }
+class plan extends Model { }
 
-Plan.init(
+plan.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -69,13 +69,14 @@ Plan.init(
     },
     {
         sequelize: database,
-        modelName: "Plan"
+        modelName: "plan",
+        underscored: true
     }
 
 );
 
-category.hasMany(Plan, { onDelete: "CASCADE" });
-Plan.belongsTo(category);
+category.hasMany(plan, { onDelete: "CASCADE", foreignKey: "category_id" });
+plan.belongsTo(category, { foreignKey: "category_id"});
 
 
-module.exports = Plan;
+module.exports = plan;

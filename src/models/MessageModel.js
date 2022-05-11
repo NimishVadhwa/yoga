@@ -1,10 +1,11 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 const user = require('./UserModel');
+const group = require('./GroupModel');
 
-class Message extends Model { }
+class message extends Model { }
 
-Message.init(
+message.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -16,36 +17,31 @@ Message.init(
             type: DataTypes.TEXT,
             allowNull: false
         },
-        type: {
-            type: DataTypes.TEXT,
+        message_type: {
+            type: DataTypes.ENUM('text', 'file'),
             allowNull: false,
         },
-        roomname: {
-            type: DataTypes.STRING,
+        chat_type: {
+            type: DataTypes.ENUM('group','single'),
             allowNull: false,
         }
     },
     {
         sequelize: database,
-        modelName: "Message"
+        modelName: "message",
+        underscored: true
     }
 
 );
 
-user.hasMany(Message, {
-    as: "sender",
-    foreignKey: "senderId",
-    onDelete: "CASCADE",
-});
-Message.belongsTo(user, { as: "sender" });
+user.hasMany(message, { foreignKey: "sender_id",onDelete: "CASCADE" });
+message.belongsTo(user, { foreignKey: "sender_id" });
 
-user.hasMany(Message, {
-    as: "receiver",
-    foreignKey: "receiverId",
-    onDelete: "CASCADE",
-});
-Message.belongsTo(user, { as: "receiver" });
+user.hasMany(message, { foreignKey: "receiver_id", onDelete: "CASCADE" });
+message.belongsTo(user, { foreignKey: "receiver_id" });
+
+group.hasMany(message, { onDelete: "CASCADE", foreignKey: "group_id" })
+message.belongsTo(group, { foreignKey: "group_id"});
 
 
-
-module.exports = Message;
+module.exports = message;

@@ -7,7 +7,7 @@ const plan = require('../models/PlanModel');
 exports.all_categories = async(req,res, next) => {
 
     const schema = joi.object({
-        type: joi.string().required().valid('plan','department')
+        type: joi.string().required().valid('plan', 'department','product')
     });
 
     try {
@@ -35,7 +35,7 @@ exports.add_category = async (req, res, next) => {
 
     const schema = joi.object({
         name: joi.string().required(),
-        type : joi.string().required().valid('plan','department')
+        type: joi.string().required().valid('plan', 'department','product')
     });
     
     try {
@@ -86,13 +86,13 @@ exports.block_category = async (req, res, next) => {
 
         if(check.type == 'department')
         {
-            let check_type = await  team.findOne({ where: { CategoryId : req.body.cat_id } })
+            let check_type = await team.findOne({ where: { category_id: req.body.cat_id } })
 
             if(check_type) throw new Error('Team category is already in use');
         }
         else if(check.type == 'plan')
         {
-            let check_type = await plan.findOne({ where: { CategoryId: req.body.cat_id } })
+            let check_type = await plan.findOne({ where: { category_id: req.body.cat_id } })
 
             if (check_type) throw new Error('Plan is already in use');
         }

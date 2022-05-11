@@ -2,9 +2,9 @@ const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 const category = require('./CategoryModel');
 
-class Form_feild extends Model { }
+class form_feild extends Model { }
 
-Form_feild.init(
+form_feild.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -32,13 +32,14 @@ Form_feild.init(
     },
     {
         sequelize: database,
-        modelName: "Form_feild"
+        modelName: "form_feild",
+        underscored: true
     }
 
 );
 
-category.hasMany(Form_feild, { onDelete: "CASCADE" });
-Form_feild.belongsTo(category);
+category.hasMany(form_feild, { onDelete: "CASCADE" });
+form_feild.belongsTo(category);
 
 
-module.exports = Form_feild;
+module.exports = form_feild;

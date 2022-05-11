@@ -2,9 +2,9 @@ const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 const user = require('./UserModel');
 const category = require('./CategoryModel');
-class Team extends Model { }
+class team extends Model { }
 
-Team.init(
+team.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -21,16 +21,17 @@ Team.init(
     },
     {
         sequelize: database,
-        modelName: "Team"
+        modelName: "team",
+        underscored: true
     }
 
 );
 
-user.hasOne(Team, { onDelete: "CASCADE" });
-Team.belongsTo(user);
+user.hasOne(team, { onDelete: "CASCADE", foreignKey: "user_id" });
+team.belongsTo(user, { foreignKey: "user_id" });
 
-category.hasMany(Team, { onDelete: "CASCADE" });
-Team.belongsTo(category);
+category.hasMany(team, { onDelete: "CASCADE", foreignKey: "category_id" });
+team.belongsTo(category, { foreignKey: "category_id" });
 
 
-module.exports = Team;
+module.exports = team;

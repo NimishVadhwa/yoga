@@ -1,4 +1,6 @@
 const menu = require('../models/Menu_barModel');
+const media = require('../models/MediaModel');
+const { Op } = require("sequelize");
 
 exports.all_menu = async(req,res, next) => {
 
@@ -9,7 +11,16 @@ exports.all_menu = async(req,res, next) => {
             order: [
                 ['id', 'ASC']
             ],
-            include: ['sub_menu']
+            include: [{
+                model:menu,
+                as:'sub_menu', 
+                required:false,
+                where:{
+                    id: {
+                        [Op.ne]: '9' 
+                    }
+                }    
+            }]
         });
 
         return res.status(200).json({

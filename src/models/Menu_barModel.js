@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 
-class Menu_bar extends Model { }
+class menu_bar extends Model { }
 
-Menu_bar.init(
+menu_bar.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -33,12 +33,13 @@ Menu_bar.init(
     },
     {
         sequelize: database,
-        modelName: "Menu_bar"
+        modelName: "menu_bar",
+        underscored: true
     }
 
 );
 
-Menu_bar.hasMany(Menu_bar, { as: "sub_menu", foreignKey: "is_parent", onDelete: 'cascade' });
+menu_bar.hasMany(menu_bar, { as: "sub_menu", foreignKey: "is_parent", onDelete: 'cascade' });
 
 
-module.exports = Menu_bar;
+module.exports = menu_bar;

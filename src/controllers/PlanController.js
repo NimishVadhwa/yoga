@@ -42,7 +42,7 @@ exports.add_plan = async(req,res, next)=>{
             total_sessions: req.body.total_sessions,
             validity: req.body.validity,
             description: req.body.description,
-            CategoryId :req.body.cat_id
+            category_id:req.body.cat_id
         });
 
         return res.status(200).json({
@@ -167,7 +167,7 @@ exports.edit_plan = async (req, res, next) => {
         if(!plans) throw new Error('Plan not found');
 
         plans.name =  req.body.name;
-        if (req.file) plans.image = req.file.path; fs.unlinkSync(plans.image);
+        if (req.file) fs.unlinkSync(plans.image); plans.image = req.file.path;
         plans.price = req.body.price;
         plans.focus = req.body.focus;
         plans.duration = req.body.duration;
@@ -178,7 +178,7 @@ exports.edit_plan = async (req, res, next) => {
         plans.total_sessions= req.body.total_sessions;
         plans.validity = req.body.validity;
         plans.description= req.body.description;
-        plans.CategoryId= req.body.cat_id;
+        plans.category_id = req.body.cat_id;
         
         await plans.save();
         await plans.reload();

@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
 
-class Category extends Model { }
+class category extends Model { }
 
-Category.init(
+category.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -22,16 +22,17 @@ Category.init(
             comment: "0 is for unblock and 1 is for block"
         },
         type: {
-            type: DataTypes.ENUM('department','plan','form'),
+            type: DataTypes.ENUM('department', 'plan', 'form','product'),
             allowNull: false
         }
     },
     {
         sequelize: database,
-        modelName: "Category"
+        modelName: "category",
+        underscored: true
     }
 
 );
 
 
-module.exports = Category;
+module.exports = category;

@@ -3,9 +3,9 @@ const database = require('../database');
 const group = require('./GroupModel');
 const user = require('./UserModel');
 
-class GroupUser extends Model { }
+class group_user extends Model { }
 
-GroupUser.init(
+group_user.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -18,20 +18,27 @@ GroupUser.init(
             allowNull: false,
             defaultValue: '0',
             comment: "0 is for not admin and 1 is for admin"
+        },
+        is_remove: {
+            type: DataTypes.ENUM('0', '1'),
+            allowNull: false,
+            defaultValue: '0',
+            comment: "0 is for not remove and 1 is for remove"
         }
     },
     {
         sequelize: database,
-        modelName: "GroupUser"
+        modelName: "group_user",
+        underscored: true
     }
 
 );
 
-group.hasMany(GroupUser, {onDelete: "CASCADE"});
-GroupUser.belongsTo(group);
+group.hasMany(group_user, { onDelete: "CASCADE", foreignKey: "group_id" });
+group_user.belongsTo(group, { foreignKey: "group_id"});
 
-user.hasMany(GroupUser, { onDelete: "CASCADE" });
-GroupUser.belongsTo(user);
+user.hasMany(group_user, { onDelete: "CASCADE", foreignKey: "user_id"});
+group_user.belongsTo(user, { foreignKey: "group_id"});
 
 
-module.exports = GroupUser;
+module.exports = group_user;

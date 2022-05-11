@@ -26,3 +26,13 @@ exports.sendEmail = async (to, subject, data) => {
         });
 
 }
+
+exports.send_msg = async (sender, receiver, msg, msg_type,chat_type)=>{
+
+    console.log(sender);
+    console.log(receiver);
+    console.log(msg);
+    console.log(msg_type);
+    console.log(chat_type);
+
+}
