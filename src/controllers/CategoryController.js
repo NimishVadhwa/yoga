@@ -7,7 +7,7 @@ const plan = require('../models/PlanModel');
 exports.all_categories = async(req,res, next) => {
 
     const schema = joi.object({
-        type: joi.string().required().valid('plan', 'department','product')
+        type: joi.string().required().valid('plan', 'department','product','gallery')
     });
 
     try {
@@ -35,7 +35,7 @@ exports.add_category = async (req, res, next) => {
 
     const schema = joi.object({
         name: joi.string().required(),
-        type: joi.string().required().valid('plan', 'department','product')
+        type: joi.string().required().valid('plan', 'department','product','gallery')
     });
     
     try {

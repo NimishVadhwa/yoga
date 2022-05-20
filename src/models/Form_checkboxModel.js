@@ -1,9 +1,10 @@
 const { Model, DataTypes } = require('sequelize');
 const database = require('../database');
+const form_feild = require('./Form_feildModel');
 
-class category extends Model { }
+class form_checkbox extends Model { }
 
-category.init(
+form_checkbox.init(
     {
         id: {
             type: DataTypes.INTEGER,
@@ -18,21 +19,20 @@ category.init(
         is_block: {
             type: DataTypes.ENUM('0', '1'),
             allowNull: false,
-            defaultValue: "0",
-            comment: "0 is for unblock and 1 is for block"
-        },
-        type: {
-            type: DataTypes.ENUM('department', 'plan', 'form','product','gallery'),
-            allowNull: false
+            defaultValue: '0',
+            comment: "0 is for not block and 1 is for block"
         }
     },
     {
         sequelize: database,
-        modelName: "category",
+        modelName: "form_checkbox",
         underscored: true
     }
 
 );
 
+form_feild.hasMany(form_checkbox, { onDelete: "CASCADE", foreignKey: "field_id" });
+form_checkbox.belongsTo(form_feild, { foreignKey: "field_id" });
 
-module.exports = category;
+
+module.exports = form_checkbox;

@@ -167,7 +167,12 @@ exports.edit_plan = async (req, res, next) => {
         if(!plans) throw new Error('Plan not found');
 
         plans.name =  req.body.name;
-        if (req.file) fs.unlinkSync(plans.image); plans.image = req.file.path;
+        if (req.file) 
+        {
+            fs.unlinkSync(plans.image); 
+            plans.image = req.file.path;
+        }
+
         plans.price = req.body.price;
         plans.focus = req.body.focus;
         plans.duration = req.body.duration;

@@ -29,7 +29,7 @@ product.init(
             allowNull: false,
         },
         gender: {
-            type: DataTypes.ENUM('men', 'women','kids','all'),
+            type: DataTypes.ENUM('men', 'women','kid','all'),
             allowNull: false,
             defaultValue: 'all',
         },

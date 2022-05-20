@@ -8,7 +8,6 @@ exports.all_list = async (req, res, next) => {
     try {
         
         const data= await testimonial.findAll({
-            where:{ is_block : '0' },
             order: [[ 'id','desc' ]]
         });
 
@@ -129,6 +128,29 @@ exports.block_testimonial = async (req, res, next) => {
             data: [],
             status: true,
             message: "Successfull"
+        });
+
+    } catch (err) {
+        err.status = 400;
+        next(err);
+    }
+
+}
+
+exports.testimonial_detail = async (req, res, next) => {
+
+    try {
+
+        const data = await testimonial.findOne({
+            where: { id: req.params.id }
+        });
+
+        if (!data) throw new Error('Testimonial not found');
+
+        return res.status(200).json({
+            data: data,
+            status: true,
+            message: "Testimonials detail"
         });
 
     } catch (err) {

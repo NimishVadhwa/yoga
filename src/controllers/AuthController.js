@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require("sequelize");
 const { sendEmail } = require('../helper');
+const user_profile = require('../models/User_profileModel');
 
 exports.login = async(req,res, next)=>{
 
@@ -137,7 +138,12 @@ exports.register_user = async(req,res,next) => {
 
 exports.user_detail = async(req,res, next) => {
 
-    const data = await user.findByPk(req.user_id );
+    const data = await user.findOne({
+        where: { id: req.user_id},
+        include: [{ 
+            model: user_profile
+         }]
+    });
 
     return res.status(200).json({
         data: data,

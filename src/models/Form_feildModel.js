@@ -12,22 +12,28 @@ form_feild.init(
             allowNull: false,
             primaryKey: true
         },
+        label: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
         column_name: {
             type: DataTypes.TEXT,
             allowNull: false
         },
         column_type: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
-        min_value: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.ENUM('text', 'checkbox','textarea','file'),
             allowNull: false,
-            defaultValue: "1"
+            defaultValue: 'text'
         },
-        max_value: {
-            type: DataTypes.INTEGER,
+        is_block: {
+            type: DataTypes.ENUM('0', '1'),
             allowNull: false,
+            defaultValue: '0',
+            comment: "0 is for not block and 1 is for block"
+        },
+        index_no: {
+            type: DataTypes.BIGINT,
+            allowNull: true
         }
     },
     {
@@ -38,8 +44,8 @@ form_feild.init(
 
 );
 
-category.hasMany(form_feild, { onDelete: "CASCADE" });
-form_feild.belongsTo(category);
+category.hasMany(form_feild, { onDelete: "CASCADE", foreignKey: "category_id"  });
+form_feild.belongsTo(category, { foreignKey: "category_id" });
 
 
 module.exports = form_feild;
