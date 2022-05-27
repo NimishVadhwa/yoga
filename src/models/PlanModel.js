@@ -60,6 +60,18 @@ plan.init(
             type: DataTypes.TEXT,
             allowNull: false,
         },
+        benefits: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        frequency: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        inclusion: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
         is_block: {
             type: DataTypes.ENUM('0', '1'),
             allowNull: false,

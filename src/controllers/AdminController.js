@@ -1,27 +1,48 @@
 const menu = require('../models/Menu_barModel');
 const media = require('../models/MediaModel');
-const { Op } = require("sequelize");
 const joi = require('joi');
 const fs = require('fs');
 const user = require('../models/UserModel');
 const user_profile = require('../models/User_profileModel');
 const category = require('../models/CategoryModel');
+const role = require('../models/RoleModel');
+const role_access = require('../models/RoleAccessModel');
 
 exports.all_menu = async(req,res, next) => {
 
     try {
 
-        const data = await menu.findAll({
-            where: { is_parent:0},
-            order: [
-                ['id', 'ASC']
-            ],
-            include: [{
+        const role_dat = await role.findOne({ where:{ user_id : req.user_id } });
+
+        const data = await role_access.findAll({ 
+            where: { category_id : role_dat.category_id},
+            include:[{
                 model:menu,
-                as:'sub_menu', 
-                required:false   
+                order: [
+                    ['id', 'ASC']
+                ],
+                include: [{
+                    model:menu,
+                    as:'sub_menu', 
+                    required:false   
+                }]
             }]
-        });
+        })
+
+        // console.log(data);
+
+
+        // const data = await menu.findAll({
+        //     where: { is_parent:0},
+        //     order: [
+        //         ['id', 'ASC']
+        //     ],
+        //     include: [{
+        //         model:menu,
+        //         as:'sub_menu', 
+        //         required:false   
+        //     }]
+        // });
 
         return res.status(200).json({
             data: data,
@@ -29,6 +50,70 @@ exports.all_menu = async(req,res, next) => {
             message: "All menu"
         });
         
+    } catch (err) {
+        err.status = 400;
+        next(err);
+    }
+
+}
+
+exports.parent_menu = async(req, res, next)=>{
+
+    try {
+        
+        const data = await menu.findAll({
+            where: { is_parent:0},
+            order: [
+                ['id', 'ASC']
+            ]
+        });
+
+        return res.status(200).json({
+            data: data,
+            status: true,
+            message: "Menu"
+        });
+
+
+    } catch (err) {
+        err.status = 400;
+        next(err);
+    }
+
+}
+
+exports.dashboard = async(req, res,next)=> {
+
+    return res.status(200).json({
+        data: [],
+        status: true,
+        message: "Dashboard"
+    });
+    
+}
+
+exports.influencer = async (req, res, next) => {
+
+    const schema = joi.object({
+        is_influence:joi.string().required().valid('0','1'),
+        user_id : joi.number().required()
+    });
+
+    try {
+
+        await schema.validateAsync(req.body);
+
+        await user.update({ is_influence : req.body.is_influence},{
+            where: { id: req.body.user_id }
+        });
+
+        return res.status(200).json({
+            data: [],
+            status: true,
+            message: "Successfully"
+        });
+
+
     } catch (err) {
         err.status = 400;
         next(err);
@@ -283,7 +368,7 @@ exports.get_banner = async (req, res, next) => {
 
     try {
 
-        const data = await media.findOne({
+        const data = await media.findAll({
             where: { type: 'banner' }
         });
 
@@ -299,3 +384,4 @@ exports.get_banner = async (req, res, next) => {
     }
 
 }
+

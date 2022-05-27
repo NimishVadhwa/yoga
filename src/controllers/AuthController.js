@@ -73,7 +73,7 @@ exports.admin_login = async (req, res, next) => {
 
         if (!passcheck) throw new Error('password not matched');
 
-        if (check.is_activated == '0') throw new Error('Please verify the email');
+        if (check.is_activated == '0') throw new Error('Please Fill the complete from which was sent to your email address');
 
         const token = jwt.sign(
             { email: check.email, userId: check.id },

@@ -17,6 +17,9 @@ exports.add_plan = async(req,res, next)=>{
         total_sessions: joi.string().required(),
         validity: joi.string().required(),
         description: joi.string().required(),
+        benefits: joi.string().required(),
+        frequency: joi.string().required(),
+        inclusion: joi.string().required(),
         cat_id : joi.string().required()
     });
 
@@ -42,6 +45,9 @@ exports.add_plan = async(req,res, next)=>{
             total_sessions: req.body.total_sessions,
             validity: req.body.validity,
             description: req.body.description,
+            benefits: req.body.benefits,
+            frequency: req.body.frequency,
+            inclusion: req.body.inclusion,
             category_id:req.body.cat_id
         });
 
@@ -152,6 +158,9 @@ exports.edit_plan = async (req, res, next) => {
         validity: joi.string().required(),
         description: joi.string().required(),
         cat_id: joi.string().required(),
+        benefits: joi.string().required(),
+        frequency: joi.string().required(),
+        inclusion: joi.string().required(),
         plan_id: joi.string().required()
     });
 
@@ -184,6 +193,10 @@ exports.edit_plan = async (req, res, next) => {
         plans.validity = req.body.validity;
         plans.description= req.body.description;
         plans.category_id = req.body.cat_id;
+        plans.benefits = req.body.benefits;
+        plans.frequency = req.body.frequency;
+        plans.inclusion = req.body.inclusion;
+
         
         await plans.save();
         await plans.reload();

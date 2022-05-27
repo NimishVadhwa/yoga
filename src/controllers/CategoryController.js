@@ -1,13 +1,14 @@
 const joi = require('joi');
 const category = require('../models/CategoryModel');
-const team = require('../models/TeamModel')
 const plan = require('../models/PlanModel');
-
+const role_access = require('../models/RoleAccessModel');
+const role = require('../models/RoleModel');
+const fs = require('fs');
 
 exports.all_categories = async(req,res, next) => {
 
     const schema = joi.object({
-        type: joi.string().required().valid('plan', 'department','product','gallery')
+        type: joi.string().required().valid('plan', 'department','product','gallery','form')
     });
 
     try {
@@ -15,7 +16,10 @@ exports.all_categories = async(req,res, next) => {
         await schema.validateAsync(req.body);
 
         const data = await category.findAll({
-            where: { type:req.body.type }
+            where: { type:req.body.type },
+            include: [{
+                model:role_access
+            }]
         });
 
         return res.status(200).json({
@@ -35,7 +39,7 @@ exports.add_category = async (req, res, next) => {
 
     const schema = joi.object({
         name: joi.string().required(),
-        type: joi.string().required().valid('plan', 'department','product','gallery')
+        type: joi.string().required().valid('plan','product','gallery')
     });
     
     try {
@@ -45,7 +49,8 @@ exports.add_category = async (req, res, next) => {
         const [data, created]  = await category.findOrCreate({
             where: { name:req.body.name },
             defaults: {
-                type: req.body.type
+                type: req.body.type,
+                image:req.file.path
             }
         });
 
@@ -61,7 +66,55 @@ exports.add_category = async (req, res, next) => {
 
         
     } catch (err) {
+        if (req.file) fs.unlinkSync(req.file.path);
+
         err.status = 409;
+        next(err);
+    }
+
+}
+
+exports.add_department = async (req, res, next) => {
+
+    const schema = joi.object({
+        name : joi.string().required(),
+        column : joi.array().required()
+    });
+
+    try {
+       
+        await schema.validateAsync(req.body);
+        
+        const [data, created] = await category.findOrCreate({
+            where: { name: req.body.name },
+            defaults: {
+                type: 'department'
+            }
+        });
+
+        if (!created) {
+            throw new Error('Already exists');
+        }
+
+        req.body.column.forEach(async (element) => {
+        
+            await role_access.create({
+                menubar_id: element.menu_id,
+                category_id : data.id,
+                status : element.status
+            });
+
+        });
+
+        return res.status(200).json({
+            data: [],
+            status: true,
+            message: "Team category successfully"
+        });
+
+
+    } catch (err) {
+        err.status = 400;
         next(err);
     }
 
@@ -86,7 +139,7 @@ exports.block_category = async (req, res, next) => {
 
         if(check.type == 'department')
         {
-            let check_type = await team.findOne({ where: { category_id: req.body.cat_id } })
+            let check_type = await role.findOne({ where: { category_id: req.body.cat_id } })
 
             if(check_type) throw new Error('Team category is already in use');
         }
@@ -154,9 +207,17 @@ exports.edit_category = async (req, res, next) => {
 
         await schema.validateAsync(req.body);
 
-        await category.update({ name: req.body.name }, {
+        const data = await category.findOne({
             where: { id: req.body.cat_id }
         });
+
+        data.name = req.body.name;
+
+        if(req.file){
+            fs.unlinkSync(data.image);
+            data.image = req.file.path;
+        }
+        await data.save();
 
         return res.status(200).json({
             data: [],

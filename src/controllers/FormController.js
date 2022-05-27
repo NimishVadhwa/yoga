@@ -3,6 +3,7 @@ const field = require('../models/Form_feildModel');
 const form_value = require('../models/Form_valueModel');
 const category = require('../models/CategoryModel');
 const checkbox = require('../models/Form_checkboxModel');
+const role = require('../models/RoleModel');
 
 exports.add_form_column = async(req, res, next)=>{
 
@@ -60,6 +61,50 @@ exports.add_form_column = async(req, res, next)=>{
 
 }
 
+exports.edit_form_column = async (req, res, next) => {
+
+    const schema = joi.object({
+        column : joi.array().required()
+    });
+
+    try {
+        
+        await schema.validateAsync(req.body);
+
+        req.body.column.forEach(async (element) => {
+
+
+            await field.update({ label: element.label }, {
+                where: { id: element.field_id }
+            });
+
+            if (element.type == 'checkbox') {
+
+                element.check.forEach(async (value) => {
+
+                    await checkbox.update({ name:value.label },{
+                        where: { id: value.checkbox_id }
+                    });
+
+                })
+
+            }
+
+        });
+
+        return res.status(200).json({
+            data: [],
+            status: true,
+            message: "Feilds updated successfully"
+        });
+
+    } catch (err) {
+        err.status = 400;
+        next(err);
+    }
+
+}
+
 exports.form_column_with_cat = async (req, res, next) => {
 
     const schema = joi.object({
@@ -71,7 +116,10 @@ exports.form_column_with_cat = async (req, res, next) => {
         await schema.validateAsync(req.params);
 
         const data = await field.findAll({
-            where: { category_id : req.params.cat_id}
+            where: { category_id : req.params.cat_id},
+            include:[{
+                model:checkbox
+            }]
         });
 
         return res.status(200).json({
@@ -121,6 +169,8 @@ exports.block_field = async(req, res, next)=>{
 exports.add_field_value = async (req, res, next) => {
 
     const schema = joi.object({
+        cat_id: joi.number().required(),
+        trainer_req: joi.string().required().valid('0','1'),
         data : joi.array().required()
     });
 
@@ -132,11 +182,22 @@ exports.add_field_value = async (req, res, next) => {
 
             await form_value.create({
                 field_id: element.field_id,
-                user_id : req.user_id,
-                value: element.value
+                user_id: req.user_id,
+                value: element.value,
+                checkbox_id: element.checkbox_id,
+                category_id: req.body.cat_id
             });
 
         });
+
+        if(req.body.trainer_req == '1')
+        {
+            await role.create({
+                user_id : req.user_id,
+                is_trainee : '1',
+                request : 'pending'
+            });
+        }
 
         return res.status(200).json({
             data: [],
@@ -194,3 +255,4 @@ exports.image_upload = async (req, res, next) => {
     });
 
 }
+

@@ -7,7 +7,7 @@ exports.sendEmail = async (to, subject, data) => {
         to: to, // Change to your recipient
         from: 'websit11e@transform.vc',
         subject: subject,
-        html: 'asdf',
+        html: data,
     }
 
     console.log(to);

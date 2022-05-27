@@ -85,6 +85,15 @@ let storage_form = multer.diskStorage({
     }
 });
 
+let storage_cat = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/images/category');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Math.random() + file.originalname);
+    }
+});
+
 let imageFilter = function (req, file, cb) {
     if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
         req.fileValidationError = 'Only image files are allowed!';
@@ -135,9 +144,14 @@ let upload_banner = multer({
 });
 
 let upload_form = multer({
-    fileFilter: imageFilter,
     limits: { fileSize: 10 * 1024 * 1024 },
     storage: storage_form
+});
+
+let upload_cat = multer({
+    fileFilter: imageFilter,
+    limits: { fileSize: 2 * 1024 * 1024 },
+    storage: storage_cat
 });
 
 //auth 
@@ -146,30 +160,42 @@ route.post('/auth/register_user', AuthController.register_user);
 route.post('/auth/forget-password', AuthController.forget_password);
 route.post('/auth/change-password', AuthController.change_password);
 route.get('/auth/logout',auth, AuthController.logout);
+route.post('/auth/admin-login', AuthController.admin_login); // Admin auth 
+
+
+route.get('/menu/menu-bar', auth, AdminController.all_menu); // Menu bar with access
+route.get('/menu/parent-menu', auth, AdminController.parent_menu); // all parent Menu
+
+route.get('/dashboard/dashboard', AdminController.dashboard); // dashboard
+route.post('/influencer/influencer', auth, AdminController.influencer); // influencer
+
 
 //banner
 route.get('/banner/get-banner', AdminController.get_banner);
 route.post('/banner/edit-banner', auth, upload_banner.single('image'), AdminController.edit_banner); 
 
-route.post('/auth/admin-login', AuthController.admin_login); // Admin auth 
 
-route.get('/auth/all-client', auth, AdminController.all_clients); // all clients list
+//client
+route.get('/auth/all-client', auth, AdminController.all_clients);
 
-route.get('/menu/menu-bar', auth, AdminController.all_menu); // Menu bar
-
-route.get('/auth/detail', auth, AuthController.user_detail); // User detail
-route.post('/auth/edit-detail', auth, upload_user.single('image'), AdminController.edit_user_profile); // Edit User detail
+//User
+route.get('/auth/detail', auth, AuthController.user_detail); 
+route.post('/auth/edit-detail', auth, upload_user.single('image'), AdminController.edit_user_profile);
 
 
 //Trainer
-// route.get('/trainer/all-list', TrainerController.trainer_list);
+route.get('/trainer/all-list', TrainerController.trainer_list);
+route.post('/trainer/add-trainer', TrainerController.add_trainer);
+route.post('/trainer/trainer-request-list',auth, TrainerController.trainer_request_list);
+
 
 //Category
 route.post('/cat/all-cat', CategoryController.all_categories);
-route.post('/cat/add-cat',auth, CategoryController.add_category);
+route.post('/cat/add-cat', auth, upload_cat.single('image'), CategoryController.add_category);
+route.post('/cat/edit-cat', auth, upload_cat.single('image'), CategoryController.edit_category);
+route.post('/cat/add-team-cat', auth, CategoryController.add_department);
 route.post('/cat/block-cat', auth, CategoryController.block_category);
 route.get('/cat/cat_plan', CategoryController.cat_plan);
-route.post('/cat/edit-cat', CategoryController.edit_category);
 
 
 //Plan
@@ -205,6 +231,7 @@ route.get('/gallery/gallery-with-cat', AdminController.gallery_with_cat);
 
 //Form
 route.post('/form/add-form-field', auth, FormController.add_form_column);
+route.post('/form/edit-form-field', auth, FormController.edit_form_column);
 route.get('/form/cat-form-field/:cat_id', FormController.form_column_with_cat);
 route.post('/form/block-field',auth, FormController.block_field);
 route.post('/form/add-field-value', auth, FormController.add_field_value); 

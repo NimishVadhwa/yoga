@@ -15,6 +15,10 @@ category.init(
             type: DataTypes.TEXT,
             allowNull: false
         },
+        image: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         is_block: {
             type: DataTypes.ENUM('0', '1'),
             allowNull: false,
