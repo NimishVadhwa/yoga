@@ -28,8 +28,13 @@ exports.add_form_column = async(req, res, next)=>{
                 label: element.label,
                 column_name:element.column,
                 column_type:element.type,
-                category_id: req.body.cat_id
+                category_id: req.body.cat_id,
+                file_type: element.file_type,
+                is_required:element.required
             });
+
+            dta.index_no = dta.id;
+            await dta.save();
 
             if(element.type == 'checkbox')
             {
@@ -117,6 +122,9 @@ exports.form_column_with_cat = async (req, res, next) => {
 
         const data = await field.findAll({
             where: { category_id : req.params.cat_id},
+            order: [
+                ['index_no', 'ASC']
+            ],
             include:[{
                 model:checkbox
             }]

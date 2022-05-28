@@ -21,9 +21,19 @@ form_feild.init(
             allowNull: false
         },
         column_type: {
-            type: DataTypes.ENUM('text', 'checkbox','textarea','file'),
+            type: DataTypes.ENUM('text', 'checkbox', 'file', 'email'),
             allowNull: false,
             defaultValue: 'text'
+        },
+        file_type: {
+            type: DataTypes.ENUM('image', 'doc', 'video'),
+            allowNull: true,
+        },
+        is_required: {
+            type: DataTypes.ENUM('1', '0'),
+            allowNull: false,
+            defaultValue: '1',
+            comment: "0 is for not required the field and 1 is for required the field"
         },
         is_block: {
             type: DataTypes.ENUM('0', '1'),
