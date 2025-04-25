@@ -25,6 +25,7 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).json({ status: false, message: err.message });
 });
 
+// Socket
 db
     .sync()
     .then((result) => {
@@ -35,10 +36,7 @@ db
         io.on('connection', (socket) => {
             console.log('=============socket call');
 
-            // socket.broadcast.emit('connectionss','asdf');
-            // socket.broadcast.emit('connection1','asdf1');
-
-
+           
             socket.on('send-single-msg', (sender,receiver,msg,msg_type) => {
                 console.log('send====', sender, '====from', receiver,'====msg',msg);
                 send_msg(sender,receiver,msg,msg_type,'single');
